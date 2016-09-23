@@ -1,0 +1,9 @@
+Python:
+^^^^^^
+pyinotify
+argparse
+GitPython
+
+Host:
+^^^^
+Fedora/Centos: libgit2-devel
