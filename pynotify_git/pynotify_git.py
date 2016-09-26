@@ -11,7 +11,8 @@ path_filter = [
     ".*\.git*", 		# git repo
     ".*\.swp*", 		# vim swap files
     ".*4913$", ".*5036$",	# vim tmp file that makes sure the directory
-    ".*5159$", ".*5282$",	# is writable for swap files.
+    ".*5159$", ".*5282$",	# is writable for swap files
+    ".*\.blend@$", ".*\.blend[0-9]+$", # Blender tmp files.
 ]
 
 class EventHandler(pyinotify.ProcessEvent):
@@ -21,7 +22,8 @@ class EventHandler(pyinotify.ProcessEvent):
         return
 
     print("File created %s !" % event.pathname)
-
+    repo.index.add([event.pathname]) 
+    repo.index.commit("save %s" % event.pathname)
 
   def process_IN_MODIFY(self, event):
     for filter in path_filter:
@@ -32,6 +34,15 @@ class EventHandler(pyinotify.ProcessEvent):
     repo.index.add([event.pathname]) 
     repo.index.commit("save %s" % event.pathname)
 
+  def process_IN_MOVED_TO(self, event):
+    for filter in path_filter:
+      if (re.match(filter, event.pathname)):
+        return
+
+    print("File moved %s !" % event.pathname)
+    repo.index.add([event.pathname]) 
+    repo.index.commit("save %s" % event.pathname)
+
 
 def __format_time():
   return datetime.datetime.now().strftime('%d%m%Y')
@@ -39,7 +50,7 @@ def __format_time():
 
 def launch_inotify():
   wm = pyinotify.WatchManager()
-  mask = pyinotify.IN_CREATE | pyinotify.IN_MODIFY
+  mask = pyinotify.IN_CREATE | pyinotify.IN_MODIFY | pyinotify.IN_MOVED_TO
 
   handler = EventHandler()
   notifier = pyinotify.Notifier(wm, handler)
@@ -55,8 +66,13 @@ args = parser.parse_args()
 try:
   # Create Repository object.
   repo = Repo(args.dir)
+
   # Create a new head (<=> branch) for today's dev.
-  dev_branch = repo.create_head("dev/%s" % __format_time())
+  try:
+	  dev_branch = repo.heads["dev/%s" % __format_time()]
+  except IndexError:
+	  dev_branch = repo.create_head("dev/%s" % __format_time())
+
   # And work on this new branch.
   dev_branch.checkout()
 except exc.InvalidGitRepositoryError as e:
