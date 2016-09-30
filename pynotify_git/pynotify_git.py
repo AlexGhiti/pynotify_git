@@ -77,10 +77,10 @@ try:
   dev_branch.checkout()
 except exc.InvalidGitRepositoryError as e:
   print("dir is not versioned.\n")
-  exit(0)
+  exit(1)
 except exc.NoSuchPathError as e:
   print("dir does not exist.\n")
-  exit(0)
+  exit(1)
 
 launch_inotify()
 
