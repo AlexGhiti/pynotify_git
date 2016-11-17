@@ -1,0 +1,2 @@
+- options with kivy must be passed after "--" : ./pynotify_git/pynotify_git.py -- --dir=$PWD 
+- check https://kivy.org/docs/api-kivy.core.window.html : apparently, you can have virtual keyboard very easily !!!
