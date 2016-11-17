@@ -55,9 +55,9 @@ class PynotifyGitApp(App):
     notifier.stop()
     kivy_app.stop()
 
-  #def restore(*largs):
-  #  for arg in largs:
-  #    print(arg)
+  def restore(*largs):
+    for arg in largs:
+      print(arg)
 
   def build(self):
     self.text_branch = TextInput(text = "Branch", multiline = False)
@@ -73,8 +73,7 @@ class PynotifyGitApp(App):
     self.layout.add_widget(btn);
     
     Window.bind(on_close = self.exit_app)
-    # TODO: upgrade to kivy 1.9.2
-    # Window.bind(on_restore = self.restore)
+    Window.bind(on_restore = self.restore)
     Window.minimize()
 
     return self.layout
