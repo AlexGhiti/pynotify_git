@@ -116,6 +116,8 @@ def launch_inotify():
   wdd = wm.add_watch(args.dir, mask, rec = True)
   notifier.start()
 
+  return notifier
+
 
 parser = argparse.ArgumentParser(description = 'Automatically create git commit when a file is saved')
 parser.add_argument('--dir', default = "",
